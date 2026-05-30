@@ -94,7 +94,6 @@ if(QGC_BUILD_SWARM)
         PRIVATE
             Swarm/SwarmManager.cc
             Swarm/SwarmManager.h
-            Swarm/Swarm.qrc
     )
 endif()
 

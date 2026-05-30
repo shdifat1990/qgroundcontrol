@@ -281,28 +281,44 @@ void QGCCorePlugin::factValueGridCreateDefaultSettings(FactValueGrid* factValueG
 
 QQmlApplicationEngine *QGCCorePlugin::createQmlApplicationEngine(QObject *parent)
 {
+    qCDebug(QGCCorePluginLog) << "createQmlApplicationEngine: Starting QML engine initialization";
     QQmlApplicationEngine *const qmlEngine = new QQmlApplicationEngine(parent);
+    
+    qCDebug(QGCCorePluginLog) << "createQmlApplicationEngine: Adding import path qrc:/qml";
     qmlEngine->addImportPath(QStringLiteral("qrc:/qml"));
+    
 #ifdef QGC_BUILD_SWARM
+    qCDebug(QGCCorePluginLog) << "createQmlApplicationEngine: Adding import path qrc:/qml/Swarm";
     qmlEngine->addImportPath(QStringLiteral("qrc:/qml/Swarm"));
 #endif
+
     qmlEngine->rootContext()->setContextProperty(QStringLiteral("joystickManager"), JoystickManager::instance());
 
 #ifdef QGC_BUILD_SWARM
+    qCDebug(QGCCorePluginLog) << "createQmlApplicationEngine: Initializing SwarmManager";
     // Ensure SwarmManager is initialized
     if (!SwarmManager::instance()) {
+        qCDebug(QGCCorePluginLog) << "createQmlApplicationEngine: Creating new SwarmManager instance";
         qmlEngine->rootContext()->setContextProperty(QStringLiteral("SwarmManager"), new SwarmManager(qmlEngine));
     } else {
+        qCDebug(QGCCorePluginLog) << "createQmlApplicationEngine: Using existing SwarmManager instance";
         qmlEngine->rootContext()->setContextProperty(QStringLiteral("SwarmManager"), SwarmManager::instance());
     }
 #endif
 
+    qCDebug(QGCCorePluginLog) << "createQmlApplicationEngine: QML engine initialization complete";
     return qmlEngine;
 }
 
 void QGCCorePlugin::createRootWindow(QQmlApplicationEngine *qmlEngine)
 {
+    qCDebug(QGCCorePluginLog) << "createRootWindow: Loading MainWindow.qml";
     qmlEngine->load(QUrl(QStringLiteral("qrc:/qml/QGroundControl/MainWindow.qml")));
+    if (qmlEngine->rootObjects().isEmpty()) {
+        qCWarning(QGCCorePluginLog) << "createRootWindow: WARNING - rootObjects is empty after loading MainWindow.qml";
+    } else {
+        qCDebug(QGCCorePluginLog) << "createRootWindow: MainWindow.qml loaded successfully, root objects:" << qmlEngine->rootObjects().size();
+    }
 }
 
 VideoReceiver *QGCCorePlugin::createVideoReceiver(QObject *parent)

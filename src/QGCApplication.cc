@@ -261,26 +261,49 @@ bool QGCApplication::_initVideo()
 
 void QGCApplication::_initForNormalAppBoot()
 {
+    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Starting initialization sequence";
+    
     (void) _initVideo();
+    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: _initVideo() completed";
 
     QQuickStyle::setStyle("Basic");
+    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Calling QGCCorePlugin::instance()->init()";
     QGCCorePlugin::instance()->init();
+    
+    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Initializing MAVLinkProtocol";
     MAVLinkProtocol::instance()->init();
+    
+    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Initializing MultiVehicleManager";
     MultiVehicleManager::instance()->init();
+    
+    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Creating QML application engine";
     _qmlAppEngine = QGCCorePlugin::instance()->createQmlApplicationEngine(this);
     QObject::connect(_qmlAppEngine, &QQmlApplicationEngine::objectCreationFailed, this, QCoreApplication::quit, Qt::QueuedConnection);
-
+    
+    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Adding image providers";
     // Must register before createRootWindow — root QML references QGCColoredImage which resolves image://coloredsvg/... at load time.
     _qmlAppEngine->addImageProvider(_qgcImageProviderId, new QGCImageProvider());
     _qmlAppEngine->addImageProvider(QLatin1String(ColoredSvgImageProvider::ProviderId), new ColoredSvgImageProvider());
 
+    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Creating root window";
     QGCCorePlugin::instance()->createRootWindow(_qmlAppEngine);
 
+    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Initializing AudioOutput";
     AudioOutput::instance()->init(SettingsManager::instance()->appSettings()->audioVolume(), SettingsManager::instance()->appSettings()->audioMuted());
+    
+    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Initializing FollowMe";
     FollowMe::instance()->init();
+    
+    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Initializing QGCPositionManager";
     QGCPositionManager::instance()->init();
+    
+    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Initializing LinkManager";
     LinkManager::instance()->init();
+    
+    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Initializing VideoManager, mainRootWindow():" << (mainRootWindow() ? "valid" : "NULL");
     VideoManager::instance()->init(mainRootWindow());
+    
+    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Initialization sequence completed";
 
     // Set the window icon now that custom plugin has a chance to override it
 #ifdef Q_OS_LINUX
