@@ -53,7 +53,10 @@ fi
     -DQT_HOST_PATH="${QT_HOST_PATH}" \
     -DQGC_AARCH64_SYSROOT="${SYSROOT}" \
     -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
-    -DPython3_EXECUTABLE=/opt/qgc-venv/bin/python
+    -DPython3_EXECUTABLE=/opt/qgc-venv/bin/python \
+    -DQGC_BUILD_SWARM=ON \
+    -DQGC_BUILD_GST=ON \
+    -DQGC_CUSTOM_APP=ON
 
 JOBS="${JOBS:-$(( $(nproc) > 1 ? $(nproc) / 2 : 1 ))}"
 echo "  jobs:         ${JOBS}"

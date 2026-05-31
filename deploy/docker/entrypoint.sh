@@ -28,13 +28,19 @@ if [[ -n "${ANDROID_SDK_ROOT:-}" ]]; then
         -DQT_HOST_PATH="${QT_HOST_PATH}" \
         -DQT_ANDROID_ABIS="${ANDROID_ABIS}" \
         -DANDROID_SDK_ROOT="${ANDROID_SDK_ROOT}" \
-        -DQT_ANDROID_SIGN_APK=OFF
+        -DQT_ANDROID_SIGN_APK=OFF \
+        -DQGC_BUILD_SWARM=ON \
+        -DQGC_ENABLE_GST_VIDEOSTREAMING=ON \
+        -DQGC_CUSTOM_APP=ON
     cmake --build /project/build --target all --config "${BUILD_TYPE}" --parallel
 else
     echo "Building QGroundControl (${BUILD_TYPE})..."
     qt-cmake -S /project/source -B /project/build -G Ninja \
         -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
-        -DPython3_EXECUTABLE=/opt/qgc-venv/bin/python
+        -DPython3_EXECUTABLE=/opt/qgc-venv/bin/python \
+        -DQGC_BUILD_SWARM=ON \
+        -DQGC_BUILD_GST=ON \
+        -DQGC_CUSTOM_APP=ON
     cmake --build /project/build --target all --parallel
     cmake --install /project/build --config "${BUILD_TYPE}"
 fi
