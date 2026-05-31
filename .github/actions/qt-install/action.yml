@@ -58,7 +58,9 @@ runs:
         QT_ARCHIVES: ${{ inputs.archives }}
       run: python3 "${GITHUB_WORKSPACE}/tools/setup/install_qt.py" cache-key --arch "${QT_ARCH}" --modules "${QT_MODULES}" --archives "${QT_ARCHIVES}"
 
-    # Cache is keyed on host+target+arch+version+modules-digest. PRs save too (GHA evicts LRU under the 10 GB repo cap) so amend+force-push iterations don't re-download Qt every time. Forks can't write to the parent's cache.
+    # Cache is keyed on host+target+arch+version+modules-digest. PRs save too
+          # (GHA evicts LRU under the 10 GB repo cap) so amend+force-push iterations
+          # don't re-download Qt every time. Forks can't write to the parent's cache.
     # Transient cache-service blips have surfaced as silent step exit on Windows runners; degrade to a cache miss instead of failing the build.
     - name: Restore Qt cache
       id: qt-cache

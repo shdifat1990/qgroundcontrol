@@ -144,7 +144,9 @@ jobs:
             pkg-config gettext bison flex cmake ninja-build
           version: gstreamer-android-deps-v1
 
-      # Android/iOS GStreamer builds don't link against host Qt — skip build-setup there. The desktop platforms run through build-setup so we get qt-install + setup-python + platform compiler toolchain in one shot.
+      # Android/iOS GStreamer builds don't link against host Qt — skip build-setup.
+          # The desktop platforms run through build-setup so we get qt-install +
+          # setup-python + platform compiler toolchain in one shot.
       - name: Build Setup
         if: inputs.platform == 'linux' || inputs.platform == 'macos' || inputs.platform == 'windows'
         uses: ./.github/actions/build-setup

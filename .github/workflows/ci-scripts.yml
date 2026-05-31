@@ -125,7 +125,7 @@ jobs:
         run: |
           echo "=== CI Scripts Test Runner ==="
           cd .github/scripts
-          
+
           # Run pytest, capturing result to avoid workflow failure (tests are optional for now)
           python3 -m pytest tests/ -v --tb=short; exit 0
           echo "Test complete"

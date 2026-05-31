@@ -42,20 +42,20 @@ jobs:
         id: env
         run: |
           set -euo pipefail
-          
+
           echo "=== JIACDIGCS Environment Validation ==="
           echo "App Name: $QGC_APP_NAME"
           echo "Org Name: $QGC_ORG_NAME"
           echo "Org Domain: $QGC_ORG_DOMAIN"
           echo "Package: $QGC_PACKAGE"
           echo "Qt Version: $QT_VERSION"
-          
+
           # Validate build-config.json
           if [ -f build-config.json ]; then
             echo "build-config.json exists"
             python3 -c "import json; c=json.load(open('build-config.json')); print('Config valid:', c.get('app_name','N/A'))"
           fi
-          
+
           echo "qt-version=$QT_VERSION" >> "$GITHUB_OUTPUT"
           echo "app-name=$QGC_APP_NAME" >> "$GITHUB_OUTPUT"
           echo "::notice::Environment validation complete for JIACDIGCS"
@@ -144,12 +144,12 @@ jobs:
           echo "App: $env:QGC_APP_NAME"
           echo "Org: $env:QGC_ORG_NAME"
           echo "Qt: $env:QT_VERSION"
-          
+
           # Set JIACDIGCS specific vars
           $env:QGC_BUILD_SWARM = "ON"
           $env:QGC_BUILD_GST = "ON"
           $env:QGC_CUSTOM_APP = "true"
-          
+
           Write-Output "Environment configured for JIACDIGCS"
         continue-on-error: true
 
@@ -167,7 +167,10 @@ jobs:
           target: desktop
           arch: win64_msvc2022_64
           dir: C:/Qt
-          modules: qtnetworkauth qtcharts qtpositioning qt5compat qtmultimedia qtconnectivity qtgamepad qtwebview qt3d qtquick3d qtquicktimeline qtcharts qtlottie qtquickeffect qttranslations qtwebengine qtlocation
+          modules: >-
+            qtnetworkauth qtcharts qtpositioning qt5compat qtmultimedia
+            qtconnectivity qtgamepad qtwebview qt3d qtquick3d qtquicktimeline
+            qtcharts qtlottie qtquickeffect qttranslations qtwebengine qtlocation
         continue-on-error: true
 
       - name: Configure CMake
@@ -232,7 +235,7 @@ jobs:
           echo "App: $QGC_APP_NAME"
           echo "Org: $QGC_ORG_NAME"
           echo "Qt: $QT_VERSION"
-          
+
           export QGC_BUILD_SWARM=ON
           export QGC_BUILD_GST=ON
           export QGC_CUSTOM_APP=true
@@ -257,7 +260,10 @@ jobs:
           target: android
           arch: arm64_v8a
           dir: /opt/Qt
-          modules: qtnetworkauth qtcharts qtpositioning qt5compat qtmultimedia qtconnectivity qtgamepad qtwebview qt3d qtquick3d qtquicktimeline qtcharts qtlottie qtquickeffect qttranslations qtwebengine qtlocation
+          modules: >-
+            qtnetworkauth qtcharts qtpositioning qt5compat qtmultimedia
+            qtconnectivity qtgamepad qtwebview qt3d qtquick3d qtquicktimeline
+            qtcharts qtlottie qtquickeffect qttranslations qtwebengine qtlocation
         continue-on-error: true
 
       - name: Configure CMake
@@ -320,7 +326,7 @@ jobs:
           echo "App: $QGC_APP_NAME"
           echo "Org: $QGC_ORG_NAME"
           echo "Qt: $QT_VERSION"
-          
+
           export QGC_BUILD_SWARM=ON
           export QGC_BUILD_GST=ON
           export QGC_CUSTOM_APP=true
@@ -334,7 +340,10 @@ jobs:
           target: desktop
           arch: clang_64
           dir: ~/Qt
-          modules: qtnetworkauth qtcharts qtpositioning qt5compat qtmultimedia qtconnectivity qtgamepad qtwebview qt3d qtquick3d qtquicktimeline qtcharts qtlottie qtquickeffect qttranslations qtwebengine qtlocation
+          modules: >-
+            qtnetworkauth qtcharts qtpositioning qt5compat qtmultimedia
+            qtconnectivity qtgamepad qtwebview qt3d qtquick3d qtquicktimeline
+            qtcharts qtlottie qtquickeffect qttranslations qtwebengine qtlocation
         continue-on-error: true
 
       - name: Configure CMake
@@ -396,7 +405,7 @@ jobs:
           echo "App: $QGC_APP_NAME"
           echo "Org: $QGC_ORG_NAME"
           echo "Qt: $QT_VERSION"
-          
+
           export QGC_BUILD_SWARM=ON
           export QGC_BUILD_GST=ON
           export QGC_CUSTOM_APP=true
@@ -410,7 +419,10 @@ jobs:
           target: ios
           arch: arm64
           dir: ~/Qt
-          modules: qtnetworkauth qtcharts qtpositioning qt5compat qtmultimedia qtconnectivity qtgamepad qtwebview qt3d qtquick3d qtquicktimeline qtcharts qtlottie qtquickeffect qttranslations qtwebengine qtlocation
+          modules: >-
+            qtnetworkauth qtcharts qtpositioning qt5compat qtmultimedia
+            qtconnectivity qtgamepad qtwebview qt3d qtquick3d qtquicktimeline
+            qtcharts qtlottie qtquickeffect qttranslations qtwebengine qtlocation
         continue-on-error: true
 
       - name: Configure CMake
@@ -485,7 +497,8 @@ jobs:
           echo "- BUILD_GST: ON" >> $GITHUB_STEP_SUMMARY
           echo "- QGC_PACKAGE: $QGC_PACKAGE" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Note**: This workflow is part of the JIACDIGCS automated build system. Individual build jobs may show warnings during initial setup - this is expected behavior." >> $GITHUB_STEP_SUMMARY
+          echo "**Note**: This workflow is part of the JIACDIGCS automated build system." >> $GITHUB_STEP_SUMMARY
+          echo "Individual build jobs may show warnings during initial setup - this is expected behavior." >> $GITHUB_STEP_SUMMARY
 
       - name: Complete Workflow
         run: |
