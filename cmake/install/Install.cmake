@@ -87,48 +87,49 @@ if(ANDROID)
 # Linux Installation & AppImage Creation
 # ----------------------------------------------------------------------------
 elseif(LINUX)
-    configure_file(
-        "${QGC_APPIMAGE_DESKTOP_ENTRY_PATH}"
-        "${CMAKE_BINARY_DIR}/${QGC_PACKAGE_NAME}.desktop"
-        @ONLY
-    )
-    install(
-        FILES "${CMAKE_BINARY_DIR}/${QGC_PACKAGE_NAME}.desktop"
-        DESTINATION "${CMAKE_INSTALL_DATADIR}/applications"
-    )
-    install(
-        FILES "${QGC_APPIMAGE_ICON_256_PATH}"
-        DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/256x256/apps/"
-        RENAME ${CMAKE_PROJECT_NAME}.png
-    )
-    install(
-        FILES "${QGC_APPIMAGE_ICON_SCALABLE_PATH}"
-        DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps/"
-        RENAME ${CMAKE_PROJECT_NAME}.svg
-    )
-    configure_file(
-        "${QGC_APPIMAGE_METADATA_PATH}"
-        "${CMAKE_BINARY_DIR}/${QGC_PACKAGE_NAME}.appdata.xml"
-        @ONLY
-    )
-    install(
-        FILES "${CMAKE_BINARY_DIR}/${QGC_PACKAGE_NAME}.appdata.xml"
-        DESTINATION "${CMAKE_INSTALL_DATADIR}/metainfo/"
-    )
-    configure_file(
-        "${QGC_APPIMAGE_APPRUN_PATH}"
-        "${CMAKE_BINARY_DIR}/AppRun"
-        COPYONLY
-    )
-    # Pass variables to AppImage creation script
-    install(CODE "
-        set(CMAKE_PROJECT_NAME \"${CMAKE_PROJECT_NAME}\")
-        set(CMAKE_PROJECT_VERSION \"${CMAKE_PROJECT_VERSION}\")
-        set(QGC_PACKAGE_NAME \"${QGC_PACKAGE_NAME}\")
-        set(QGC_BUILD_DIR \"${CMAKE_BINARY_DIR}\")
-        set(CMAKE_SYSTEM_PROCESSOR \"${CMAKE_SYSTEM_PROCESSOR}\")
-    ")
+    # Only configure AppImage files when QGC_CREATE_APPIMAGE is enabled
     if(QGC_CREATE_APPIMAGE)
+        configure_file(
+            "${QGC_APPIMAGE_DESKTOP_ENTRY_PATH}"
+            "${CMAKE_BINARY_DIR}/${QGC_PACKAGE_NAME}.desktop"
+            @ONLY
+        )
+        install(
+            FILES "${CMAKE_BINARY_DIR}/${QGC_PACKAGE_NAME}.desktop"
+            DESTINATION "${CMAKE_INSTALL_DATADIR}/applications"
+        )
+        install(
+            FILES "${QGC_APPIMAGE_ICON_256_PATH}"
+            DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/256x256/apps/"
+            RENAME ${CMAKE_PROJECT_NAME}.png
+        )
+        install(
+            FILES "${QGC_APPIMAGE_ICON_SCALABLE_PATH}"
+            DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps/"
+            RENAME ${CMAKE_PROJECT_NAME}.svg
+        )
+        configure_file(
+            "${QGC_APPIMAGE_METADATA_PATH}"
+            "${CMAKE_BINARY_DIR}/${QGC_PACKAGE_NAME}.appdata.xml"
+            @ONLY
+        )
+        install(
+            FILES "${CMAKE_BINARY_DIR}/${QGC_PACKAGE_NAME}.appdata.xml"
+            DESTINATION "${CMAKE_INSTALL_DATADIR}/metainfo/"
+        )
+        configure_file(
+            "${QGC_APPIMAGE_APPRUN_PATH}"
+            "${CMAKE_BINARY_DIR}/AppRun"
+            COPYONLY
+        )
+        # Pass variables to AppImage creation script
+        install(CODE "
+            set(CMAKE_PROJECT_NAME \"${CMAKE_PROJECT_NAME}\")
+            set(CMAKE_PROJECT_VERSION \"${CMAKE_PROJECT_VERSION}\")
+            set(QGC_PACKAGE_NAME \"${QGC_PACKAGE_NAME}\")
+            set(QGC_BUILD_DIR \"${CMAKE_BINARY_DIR}\")
+            set(CMAKE_SYSTEM_PROCESSOR \"${CMAKE_SYSTEM_PROCESSOR}\")
+        ")
         install(SCRIPT "${CMAKE_SOURCE_DIR}/cmake/install/CreateAppImage.cmake")
     endif()
 
