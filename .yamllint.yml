@@ -1,5 +1,10 @@
 extends: default
 
+ignore:
+  - '.cache/**'
+  - 'build/**'
+  - '**/.cache/**'
+
 rules:
   document-start: disable
   line-length:
