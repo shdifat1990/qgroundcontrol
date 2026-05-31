@@ -77,6 +77,9 @@ add_subdirectory(Android)
 # Qt plugins
 add_subdirectory(QtLocationPlugin)
 
+# Swarm QML module
+add_subdirectory(Swarm)
+
 # ============================================================================
 # Main Application Sources
 # ============================================================================
