@@ -293,7 +293,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: JIACDIGCS-Android-${{ matrix.build_type }}
-          path: build/**/*.apk
+          path: |
+            build/**/*.apk
+            android-build/**/*.apk
           retention-days: 7
         continue-on-error: true
 
