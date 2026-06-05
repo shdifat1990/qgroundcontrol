@@ -238,7 +238,7 @@ void QGCApplication::init()
 
     if (_simpleBootTest) {
         // Since GStream builds are so problematic we initialize video during the simple boot test
-        // to make sure it works and verfies plugin availability.
+        // to make sure it works and verifies plugin availability.
         _bootTestPassed = _initVideo();
     } else if (!_runningUnitTests) {
         _initForNormalAppBoot();
