@@ -289,13 +289,19 @@ jobs:
           cmake --build . --config Release --parallel
         continue-on-error: true
 
+      - name: Prepare Artifact
+        run: |
+          if ls build/android-build/*.apk 1>/dev/null 2>&1; then
+            mkdir -p ${{ runner.temp }}/build
+            cp build/android-build/*.apk ${{ runner.temp }}/build/JIACDIGCS.apk
+          fi
+        continue-on-error: true
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: JIACDIGCS-Android-${{ matrix.build_type }}
-          path: |
-            build/**/*.apk
-            android-build/**/*.apk
+          path: ${{ runner.temp }}/build/JIACDIGCS.apk
           retention-days: 7
         continue-on-error: true
 
