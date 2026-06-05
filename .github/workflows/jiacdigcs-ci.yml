@@ -271,29 +271,36 @@ jobs:
           Qt6_DIR: /opt/Qt/${{ env.QT_VERSION }}/lib/cmake/Qt6
           ANDROID_NDK: ${{ env.ANDROID_NDK_ROOT }}
         run: |
-          mkdir -p build
-          cd build
-          cmake .. \
+          mkdir -p ${{ runner.temp }}/build
+          cd ${{ runner.temp }}/build
+          cmake $GITHUB_WORKSPACE \
             -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_TOOLCHAIN_FILE=/opt/Qt/${{ env.QT_VERSION }}/lib/cmake/Qt6/qt.toolchain.cmake \
+            -DCMAKE_PREFIX_PATH=/opt/Qt/${{ env.QT_VERSION }} \
             -DQGC_APP_NAME=$QGC_APP_NAME \
             -DQGC_ORG_NAME=$QGC_ORG_NAME \
             -DQGC_ORG_DOMAIN=$QGC_ORG_DOMAIN \
             -DQGC_BUILD_SWARM=ON \
             -DQGC_ENABLE_GST_VIDEOSTREAMING=ON \
-            -DANDROID_ABI=arm64-v8a
+            -DANDROID_ABI=arm64-v8a \
+            -DQT_ANDROID_ABIS=arm64-v8a \
+            -DQT_HOST_PATH=/opt/Qt/${{ env.QT_VERSION }} \
+            -DQT_ANDROID_SIGN_APK=ON
         continue-on-error: true
 
       - name: Build
+        env:
+          GRADLE_OPTS: -Dorg.gradle.daemon=false
         run: |
-          cd build
+          cd ${{ runner.temp }}/build
           cmake --build . --config Release --parallel
         continue-on-error: true
 
       - name: Prepare Artifact
         run: |
-          if ls build/android-build/*.apk 1>/dev/null 2>&1; then
-            mkdir -p ${{ runner.temp }}/build
-            cp build/android-build/*.apk ${{ runner.temp }}/build/JIACDIGCS.apk
+          APK_DIR="${{ runner.temp }}/build/android-build"
+          if ls "${APK_DIR}"/*.apk 1>/dev/null 2>&1; then
+            cp "${APK_DIR}"/*.apk "${{ runner.temp }}/build/JIACDIGCS.apk"
           fi
         continue-on-error: true
 
