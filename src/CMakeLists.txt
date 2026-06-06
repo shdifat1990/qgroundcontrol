@@ -24,12 +24,6 @@ qt_add_qml_module(QGroundControlModule
     NO_PLUGIN
 )
 
-# ----------------------------------------------------------------------------
-# Swarm QML Resources (when building swarm)
-# ----------------------------------------------------------------------------
-# Swarm.qrc contains QML files at qresource prefix /qml/Swarm
-# and adds qrc:/qml/Swarm import path in QGCCorePlugin
-
 # iOS has no Qt SerialPort module — force no-serial-link before subdirectories read it.
 if(IOS)
     set(QGC_NO_SERIAL_LINK ON CACHE BOOL "Disable serial port communication" FORCE)
@@ -77,8 +71,10 @@ add_subdirectory(Android)
 # Qt plugins
 add_subdirectory(QtLocationPlugin)
 
-# Swarm QML module
-add_subdirectory(Swarm)
+# Swarm module (custom multi-vehicle support)
+if(QGC_BUILD_SWARM)
+    add_subdirectory(Swarm)
+endif()
 
 # ============================================================================
 # Main Application Sources
