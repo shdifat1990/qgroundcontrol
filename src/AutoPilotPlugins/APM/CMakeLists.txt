@@ -88,17 +88,17 @@ set(_apm_config_generated_qml_names
     APMTuningCopterComponent.qml
 )
 
-# Full paths in the build tree
+# Full paths in the build tree - output to QT_QML_OUTPUT_DIRECTORY for proper QML module resolution
 set(_apm_config_generated_qml "")
 foreach(_name IN LISTS _apm_config_generated_qml_names)
-    list(APPEND _apm_config_generated_qml "${APM_CONFIG_QML_GEN_DIR}/${_name}")
+    list(APPEND _apm_config_generated_qml "${CMAKE_BINARY_DIR}/qml/QGroundControl/AutoPilotPlugins/APM/${_name}")
 endforeach()
 
 add_custom_command(
     OUTPUT  ${_apm_config_generated_qml}
     COMMAND ${Python3_EXECUTABLE} -m tools.generators.config_qml.generate_pages
             --pages-dir "${APM_CONFIG_PAGES_DIR}"
-            --output-dir "${APM_CONFIG_QML_GEN_DIR}"
+            --output-dir "${CMAKE_BINARY_DIR}/qml/QGroundControl/AutoPilotPlugins/APM"
     DEPENDS ${_apm_config_generator_sources} ${_apm_config_page_definitions}
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     COMMENT "Generating APM QML config pages from VehicleConfig.json definitions"
@@ -109,7 +109,7 @@ add_custom_target(GenerateConfigQmlAPM DEPENDS ${_apm_config_generated_qml})
 
 # GENERATED suppresses qmlimportscanner reads of not-yet-existing files at configure time.
 foreach(_name IN LISTS _apm_config_generated_qml_names)
-    set_source_files_properties("${APM_CONFIG_QML_GEN_DIR}/${_name}"
+    set_source_files_properties("${CMAKE_BINARY_DIR}/qml/QGroundControl/AutoPilotPlugins/APM/${_name}"
         PROPERTIES
             GENERATED TRUE
             QT_RESOURCE_ALIAS "${_name}"

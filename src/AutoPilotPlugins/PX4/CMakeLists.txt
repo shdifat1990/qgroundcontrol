@@ -73,17 +73,17 @@ set(_config_generated_qml_names
     SafetyComponent.qml
 )
 
-# Full paths in the build tree
+# Full paths in the build tree - output to QT_QML_OUTPUT_DIRECTORY for proper QML module resolution
 set(_config_generated_qml "")
 foreach(_name IN LISTS _config_generated_qml_names)
-    list(APPEND _config_generated_qml "${CONFIG_QML_GEN_DIR}/${_name}")
+    list(APPEND _config_generated_qml "${CMAKE_BINARY_DIR}/qml/QGroundControl/AutoPilotPlugins/PX4/${_name}")
 endforeach()
 
 add_custom_command(
     OUTPUT  ${_config_generated_qml}
     COMMAND ${Python3_EXECUTABLE} -m tools.generators.config_qml.generate_pages
             --pages-dir "${CONFIG_PAGES_DIR}"
-            --output-dir "${CONFIG_QML_GEN_DIR}"
+            --output-dir "${CMAKE_BINARY_DIR}/qml/QGroundControl/AutoPilotPlugins/PX4"
     DEPENDS ${_config_generator_sources} ${_config_page_definitions}
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     COMMENT "Generating QML config pages from VehicleConfig.json definitions"
@@ -94,7 +94,7 @@ add_custom_target(GenerateConfigQmlPX4 DEPENDS ${_config_generated_qml})
 
 # GENERATED suppresses qmlimportscanner reads of not-yet-existing files at configure time.
 foreach(_name IN LISTS _config_generated_qml_names)
-    set_source_files_properties("${CONFIG_QML_GEN_DIR}/${_name}"
+    set_source_files_properties("${CMAKE_BINARY_DIR}/qml/QGroundControl/AutoPilotPlugins/PX4/${_name}"
         PROPERTIES
             GENERATED TRUE
             QT_RESOURCE_ALIAS "${_name}"

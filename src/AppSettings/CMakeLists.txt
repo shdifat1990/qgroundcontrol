@@ -34,16 +34,16 @@ set(_generated_qml_names
     Viewer3DSettings.qml
 )
 
-# Full paths in the build tree
+# Full paths in the build tree - output to QT_QML_OUTPUT_DIRECTORY for proper QML module resolution
 set(_generated_qml "")
 foreach(_name IN LISTS _generated_qml_names)
-    list(APPEND _generated_qml "${SETTINGS_QML_GEN_DIR}/${_name}")
+    list(APPEND _generated_qml "${CMAKE_BINARY_DIR}/qml/QGroundControl/AppSettings/${_name}")
 endforeach()
 
 add_custom_command(
     OUTPUT  ${_generated_qml}
     COMMAND ${Python3_EXECUTABLE} -m tools.generators.settings_qml.generate_pages
-            --output-dir "${SETTINGS_QML_GEN_DIR}"
+            --output-dir "${CMAKE_BINARY_DIR}/qml/QGroundControl/AppSettings"
     DEPENDS ${_generator_sources} ${_page_definitions} ${_settings_metadata}
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     COMMENT "Generating QML settings pages from JSON definitions"

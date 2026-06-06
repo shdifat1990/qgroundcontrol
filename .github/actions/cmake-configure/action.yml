@@ -64,6 +64,24 @@ runs:
         else
           echo "::warning::venv python not found at $VENV_PYTHON; CMake will pick system python (may lack jinja2)"
         fi
+        
+        # Pre-generate QML files before configure to ensure they're available for qmlimportscanner
+        echo "Pre-generating QML files..."
+        mkdir -p "${{ inputs.build-dir }}/qml/QGroundControl/AppSettings"
+        mkdir -p "${{ inputs.build-dir }}/qml/QGroundControl/AutoPilotPlugins/APM"
+        mkdir -p "${{ inputs.build-dir }}/qml/QGroundControl/AutoPilotPlugins/PX4"
+        
+        if [[ -x "$VENV_PYTHON" ]]; then
+          "$VENV_PYTHON" -m tools.generators.settings_qml.generate_pages \
+            --output-dir "${{ inputs.build-dir }}/qml/QGroundControl/AppSettings" || true
+          "$VENV_PYTHON" -m tools.generators.config_qml.generate_pages \
+            --pages-dir src/AutoPilotPlugins/APM/VehicleConfig \
+            --output-dir "${{ inputs.build-dir }}/qml/QGroundControl/AutoPilotPlugins/APM" || true
+          "$VENV_PYTHON" -m tools.generators.config_qml.generate_pages \
+            --pages-dir src/AutoPilotPlugins/PX4/VehicleConfig \
+            --output-dir "${{ inputs.build-dir }}/qml/QGroundControl/AutoPilotPlugins/PX4" || true
+        fi
+        
         ARGS=(configure
           --source-dir "${{ inputs.source-dir }}"
           --build-dir "${{ inputs.build-dir }}"
