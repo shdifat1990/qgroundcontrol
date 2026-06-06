@@ -859,8 +859,6 @@ void VideoManager::_initVideoReceiver(VideoReceiver *receiver, QQuickWindow *win
     void *sink = QGCCorePlugin::instance()->createVideoSink(receiver->widget(), receiver);
     if (!sink) {
         qCCritical(VideoManagerLog) << "createVideoSink() failed" << receiver->name();
-        receiver->setSink(nullptr);
-        return;
     }
     receiver->setSink(sink);
 

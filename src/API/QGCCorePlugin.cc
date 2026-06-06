@@ -36,10 +36,6 @@
 #include CUSTOMHEADER
 #endif
 
-#ifdef QGC_BUILD_SWARM
-#include "Swarm/SwarmManager.h"
-#endif
-
 #include <QtCore/QApplicationStatic>
 #include <QtCore/QFile>
 #include <QtQml/QQmlApplicationEngine>
@@ -291,20 +287,7 @@ QQmlApplicationEngine *QGCCorePlugin::createQmlApplicationEngine(QObject *parent
 {
     QQmlApplicationEngine *const qmlEngine = new QQmlApplicationEngine(parent);
     qmlEngine->addImportPath(QStringLiteral("qrc:/qml"));
-#ifdef QGC_BUILD_SWARM
-    qmlEngine->addImportPath(QStringLiteral("qrc:/qml/Swarm"));
-#endif
     qmlEngine->rootContext()->setContextProperty(QStringLiteral("joystickManager"), JoystickManager::instance());
-
-#ifdef QGC_BUILD_SWARM
-    // Ensure SwarmManager is initialized
-    if (!SwarmManager::instance()) {
-        qmlEngine->rootContext()->setContextProperty(QStringLiteral("SwarmManager"), new SwarmManager(qmlEngine));
-    } else {
-        qmlEngine->rootContext()->setContextProperty(QStringLiteral("SwarmManager"), SwarmManager::instance());
-    }
-#endif
-
     return qmlEngine;
 }
 
