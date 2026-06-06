@@ -7,7 +7,6 @@ qt_add_qml_module(SwarmModule
     VERSION 1.0
     RESOURCE_PREFIX /qml/Swarm
     QML_FILES
-        QmlControls/qmldir
         QmlControls/SwarmDashboard.qml
         QmlControls/SwarmControlPanel.qml
         QmlControls/SwarmFormationSelector.qml
