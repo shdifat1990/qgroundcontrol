@@ -96,6 +96,14 @@ if(QGC_BUILD_SWARM)
     )
 endif()
 
+# Link Swarm QML module if enabled
+if(QGC_BUILD_SWARM)
+    target_link_libraries(${CMAKE_PROJECT_NAME}
+        PRIVATE
+            SwarmModule
+    )
+endif()
+
 
 # ----------------------------------------------------------------------------
 # Include Directories
