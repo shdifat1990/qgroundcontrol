@@ -249,6 +249,12 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Setup Python
+        uses: ./.github/actions/setup-python
+        with:
+          python-version: "3.12"
+          groups: scripts
+
       - name: Build Setup (Android)
         id: setup
         uses: ./.github/actions/build-setup
