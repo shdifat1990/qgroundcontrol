@@ -162,8 +162,7 @@ jint JNI_OnLoad(JavaVM* vm, void*)
     AndroidSerial::setNativeMethods();
 #endif
 
-    // NOTE: Splash screen hide is handled by Android QtActivity
-    // Keep splash visible until QML engine is ready to prevent UI freeze
+    QNativeInterface::QAndroidApplication::hideSplashScreen(333);
 
     return JNI_VERSION_1_6;
 }

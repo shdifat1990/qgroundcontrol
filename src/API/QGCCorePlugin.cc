@@ -76,11 +76,19 @@ QGCCorePlugin *QGCCorePlugin::instance()
 
 const QVariantList &QGCCorePlugin::analyzePages()
 {
+    // Log Viewer is excluded on mobile (Android/iOS) because parsing large log files
+    // (e.g. 900 MB ULog files with 1000+ fields) exhausts the mobile heap, causing
+    // OOM crashes. Proper mobile support requires time-bucketed downsampling and will
+    // be addressed in a future major release.
+#if defined(Q_OS_ANDROID) || defined(Q_OS_IOS)
+    static const QVariantList analyzeList = {
+#else
     static const QVariantList analyzeList = {
         QVariant::fromValue(new QmlComponentInfo(
             tr("Log Viewer"),
             QUrl::fromUserInput(QStringLiteral("qrc:/qml/QGroundControl/AnalyzeView/LogViewer/LogViewerPage.qml")),
             QUrl::fromUserInput(QStringLiteral("qrc:/qmlimages/MAVLinkInspector.svg")))),
+#endif
         QVariant::fromValue(new QmlComponentInfo(
             tr("Onboard Logs"),
             QUrl::fromUserInput(QStringLiteral("qrc:/qml/QGroundControl/AnalyzeView/OnboardLogs/OnboardLogPage.qml")),
@@ -281,44 +289,28 @@ void QGCCorePlugin::factValueGridCreateDefaultSettings(FactValueGrid* factValueG
 
 QQmlApplicationEngine *QGCCorePlugin::createQmlApplicationEngine(QObject *parent)
 {
-    qCDebug(QGCCorePluginLog) << "createQmlApplicationEngine: Starting QML engine initialization";
     QQmlApplicationEngine *const qmlEngine = new QQmlApplicationEngine(parent);
-    
-    qCDebug(QGCCorePluginLog) << "createQmlApplicationEngine: Adding import path qrc:/qml";
     qmlEngine->addImportPath(QStringLiteral("qrc:/qml"));
-    
 #ifdef QGC_BUILD_SWARM
-    qCDebug(QGCCorePluginLog) << "createQmlApplicationEngine: Adding import path qrc:/qml/Swarm";
     qmlEngine->addImportPath(QStringLiteral("qrc:/qml/Swarm"));
 #endif
-
     qmlEngine->rootContext()->setContextProperty(QStringLiteral("joystickManager"), JoystickManager::instance());
 
 #ifdef QGC_BUILD_SWARM
-    qCDebug(QGCCorePluginLog) << "createQmlApplicationEngine: Initializing SwarmManager";
     // Ensure SwarmManager is initialized
     if (!SwarmManager::instance()) {
-        qCDebug(QGCCorePluginLog) << "createQmlApplicationEngine: Creating new SwarmManager instance";
         qmlEngine->rootContext()->setContextProperty(QStringLiteral("SwarmManager"), new SwarmManager(qmlEngine));
     } else {
-        qCDebug(QGCCorePluginLog) << "createQmlApplicationEngine: Using existing SwarmManager instance";
         qmlEngine->rootContext()->setContextProperty(QStringLiteral("SwarmManager"), SwarmManager::instance());
     }
 #endif
 
-    qCDebug(QGCCorePluginLog) << "createQmlApplicationEngine: QML engine initialization complete";
     return qmlEngine;
 }
 
 void QGCCorePlugin::createRootWindow(QQmlApplicationEngine *qmlEngine)
 {
-    qCDebug(QGCCorePluginLog) << "createRootWindow: Loading MainWindow.qml";
     qmlEngine->load(QUrl(QStringLiteral("qrc:/qml/QGroundControl/MainWindow.qml")));
-    if (qmlEngine->rootObjects().isEmpty()) {
-        qCWarning(QGCCorePluginLog) << "createRootWindow: WARNING - rootObjects is empty after loading MainWindow.qml";
-    } else {
-        qCDebug(QGCCorePluginLog) << "createRootWindow: MainWindow.qml loaded successfully, root objects:" << qmlEngine->rootObjects().size();
-    }
 }
 
 VideoReceiver *QGCCorePlugin::createVideoReceiver(QObject *parent)

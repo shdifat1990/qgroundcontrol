@@ -48,6 +48,7 @@
 #endif
 
 QGC_LOGGING_CATEGORY(QGCApplicationLog, "API.QGCApplication")
+QGC_LOGGING_CATEGORY(QGCAppMessageLog, "API.QGCApplication.AppMessage")
 
 QGCApplication::QGCApplication(int &argc, char *argv[], const QGCCommandLineParser::CommandLineParseResult &cli)
     : QGuiApplication(argc, argv)
@@ -238,7 +239,7 @@ void QGCApplication::init()
 
     if (_simpleBootTest) {
         // Since GStream builds are so problematic we initialize video during the simple boot test
-        // to make sure it works and verifies plugin availability.
+        // to make sure it works and verfies plugin availability.
         _bootTestPassed = _initVideo();
     } else if (!_runningUnitTests) {
         _initForNormalAppBoot();
@@ -261,49 +262,26 @@ bool QGCApplication::_initVideo()
 
 void QGCApplication::_initForNormalAppBoot()
 {
-    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Starting initialization sequence";
-    
     (void) _initVideo();
-    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: _initVideo() completed";
 
     QQuickStyle::setStyle("Basic");
-    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Calling QGCCorePlugin::instance()->init()";
     QGCCorePlugin::instance()->init();
-    
-    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Initializing MAVLinkProtocol";
     MAVLinkProtocol::instance()->init();
-    
-    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Initializing MultiVehicleManager";
     MultiVehicleManager::instance()->init();
-    
-    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Creating QML application engine";
     _qmlAppEngine = QGCCorePlugin::instance()->createQmlApplicationEngine(this);
     QObject::connect(_qmlAppEngine, &QQmlApplicationEngine::objectCreationFailed, this, QCoreApplication::quit, Qt::QueuedConnection);
-    
-    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Adding image providers";
+
     // Must register before createRootWindow — root QML references QGCColoredImage which resolves image://coloredsvg/... at load time.
     _qmlAppEngine->addImageProvider(_qgcImageProviderId, new QGCImageProvider());
     _qmlAppEngine->addImageProvider(QLatin1String(ColoredSvgImageProvider::ProviderId), new ColoredSvgImageProvider());
 
-    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Creating root window";
     QGCCorePlugin::instance()->createRootWindow(_qmlAppEngine);
 
-    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Initializing AudioOutput";
     AudioOutput::instance()->init(SettingsManager::instance()->appSettings()->audioVolume(), SettingsManager::instance()->appSettings()->audioMuted());
-    
-    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Initializing FollowMe";
     FollowMe::instance()->init();
-    
-    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Initializing QGCPositionManager";
     QGCPositionManager::instance()->init();
-    
-    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Initializing LinkManager";
     LinkManager::instance()->init();
-    
-    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Initializing VideoManager, mainRootWindow():" << (mainRootWindow() ? "valid" : "NULL");
     VideoManager::instance()->init(mainRootWindow());
-    
-    qCDebug(QGCApplicationLog) << "_initForNormalAppBoot: Initialization sequence completed";
 
     // Set the window icon now that custom plugin has a chance to override it
 #ifdef Q_OS_LINUX
@@ -425,15 +403,19 @@ void QGCApplication::showAppMessage(const QString &message, const QString &title
 {
     const QString dialogTitle = title.isEmpty() ? applicationName() : title;
 
+    if (runningUnitTests()) {
+        // Never show a blocking dialog during unit tests — it would hang the test runner.
+        // Logged under QGCAppMessageLog so tests can use expectAppMessage() to white-list
+        // expected dialogs without matching against the general QGCApplication category.
+        qCDebug(QGCAppMessageLog) << "showAppMessage:" << dialogTitle << "-" << message;
+        return;
+    }
+
     QObject *const rootQmlObject = _rootQmlObject();
     if (rootQmlObject) {
         QVariant varReturn;
         QVariant varMessage = QVariant::fromValue(message);
         QMetaObject::invokeMethod(rootQmlObject, "_showMessageDialog", Q_RETURN_ARG(QVariant, varReturn), Q_ARG(QVariant, dialogTitle), Q_ARG(QVariant, varMessage));
-    } else if (runningUnitTests()) {
-        // Unit tests can run without UI
-        // We don't use a logging category to make it easier to debug unit tests
-        qDebug() << "QGCApplication::showAppMessage unittest title:message" << dialogTitle << message;
     } else {
         // UI isn't ready yet
         _delayedAppMessages.append(QPair<QString, QString>(dialogTitle, message));
