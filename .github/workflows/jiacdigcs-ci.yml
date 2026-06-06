@@ -289,7 +289,6 @@ jobs:
             -DQT_ANDROID_ABIS=${{ env.QT_ANDROID_ABIS }}
             -DQT_HOST_PATH=${{ steps.setup.outputs.host_qt_root_dir }}
             -DQT_ANDROID_SIGN_APK=ON
-            -DQGC_BUILD_SWARM=ON
             -DQGC_ENABLE_GST_VIDEOSTREAMING=ON
             -DQGC_APP_NAME=${{ env.QGC_APP_NAME }}
             -DQGC_ORG_NAME=${{ env.QGC_ORG_NAME }}

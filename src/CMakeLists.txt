@@ -71,11 +71,6 @@ add_subdirectory(Android)
 # Qt plugins
 add_subdirectory(QtLocationPlugin)
 
-# Swarm module (custom multi-vehicle support)
-if(QGC_BUILD_SWARM)
-    add_subdirectory(Swarm)
-endif()
-
 # ============================================================================
 # Main Application Sources
 # ============================================================================
@@ -87,18 +82,6 @@ target_sources(${CMAKE_PROJECT_NAME}
         QGCApplication.cc
         QGCApplication.h
 )
-
-if(QGC_BUILD_SWARM)
-    target_sources(${CMAKE_PROJECT_NAME}
-        PRIVATE
-            Swarm/SwarmManager.cc
-            Swarm/SwarmManager.h
-    )
-    target_link_libraries(${CMAKE_PROJECT_NAME}
-        PRIVATE
-            SwarmModule
-    )
-endif()
 
 
 # ----------------------------------------------------------------------------
