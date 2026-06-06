@@ -293,6 +293,7 @@ jobs:
             -DQGC_APP_NAME=${{ env.QGC_APP_NAME }}
             -DQGC_ORG_NAME=${{ env.QGC_ORG_NAME }}
             -DQGC_ORG_DOMAIN=${{ env.QGC_ORG_DOMAIN }}
+            -DQGC_PACKAGE_NAME=${{ env.QGC_PACKAGE }}
 
       - name: Build
         id: build
