@@ -112,8 +112,20 @@ qt_add_qml_module(AppSettingsModule
         SettingsPage.qml
         TcpSettings.qml
         UdpSettings.qml
-    NO_PLUGIN
 )
+
+# Link Qt libraries to ensure qmlcache is properly initialized
+target_link_libraries(AppSettingsModule
+    PUBLIC
+        Qt6::Core
+        Qt6::Qml
+        Qt6::QmlIntegration
+)
+
+# Force-link AppSettingsModuleplugin so its qmlcache initialization
+# is included in the final executable. Without this, the qmlcache
+# may be stripped during linking on some platforms.
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE AppSettingsModule AppSettingsModuleplugin)
 
 qt_add_resources(${CMAKE_PROJECT_NAME} appsettings_resources
     PREFIX "/res"
