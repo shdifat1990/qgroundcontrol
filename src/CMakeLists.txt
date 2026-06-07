@@ -21,8 +21,7 @@ qt_add_qml_module(QGroundControlModule
         MainWindow/MainWindowSavedState.qml
     IMPORTS
         QGC
-    NO_PLUGIN
-)
+    )
 
 # Link Qt libraries to ensure qmlcache is properly initialized for static library
 target_link_libraries(QGroundControlModule
@@ -32,9 +31,9 @@ target_link_libraries(QGroundControlModule
         Qt6::QmlIntegration
 )
 
-# Force-link the module so its qmlcache initialization
-# is included in the final executable (NO_PLUGIN, so no plugin library)
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE QGroundControlModule)
+# Force-link the module and its plugin so qmlcache initialization
+# is included in the final executable
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE QGroundControlModule QGroundControlModuleplugin)
 
 # iOS has no Qt SerialPort module — force no-serial-link before subdirectories read it.
 if(IOS)

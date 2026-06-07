@@ -53,8 +53,7 @@ qt_add_qml_module(PlanViewModule
         TransformEditor.qml
         VTOLLandingPatternEditor.qml
         VTOLLandingPatternMapVisual.qml
-    NO_PLUGIN
-)
+    )
 
 
 # Link Qt libraries to ensure qmlcache is properly initialized for static library
@@ -65,9 +64,9 @@ target_link_libraries(PlanViewModule
         Qt6::QmlIntegration
 )
 
-# Force-link the module so its qmlcache initialization
-# is included in the final executable (NO_PLUGIN, so no plugin library)
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE PlanViewModule)
+# Force-link the module and its plugin so qmlcache initialization
+# is included in the final executable
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE PlanViewModule PlanViewModuleplugin)
 
 
 # Files whose runtime alias differs from their on-disk filename.

@@ -34,8 +34,7 @@ qt_add_qml_module(ToolbarModule
         TelemetryRSSIIndicator.qml
         VehicleGPSIndicator.qml
         VehicleMessageList.qml
-    NO_PLUGIN
-)
+    )
 
 
 # Link Qt libraries to ensure qmlcache is properly initialized for static library
@@ -46,9 +45,9 @@ target_link_libraries(ToolbarModule
         Qt6::QmlIntegration
 )
 
-# Force-link the module so its qmlcache initialization
-# is included in the final executable (NO_PLUGIN, so no plugin library)
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ToolbarModule)
+# Force-link the module and its plugin so qmlcache initialization
+# is included in the final executable
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE ToolbarModule ToolbarModuleplugin)
 
 
 qt_add_resources(${CMAKE_PROJECT_NAME} toolbar_resources

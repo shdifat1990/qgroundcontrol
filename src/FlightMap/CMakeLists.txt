@@ -39,8 +39,7 @@ qt_add_qml_module(FlightMapModule
         Widgets/VerticalCompassAttitude.qml
         FlightMap.qml
         MapScale.qml
-    NO_PLUGIN
-)
+    )
 
 
 # Link Qt libraries to ensure qmlcache is properly initialized for static library
@@ -51,9 +50,9 @@ target_link_libraries(FlightMapModule
         Qt6::QmlIntegration
 )
 
-# Force-link the module so its qmlcache initialization
-# is included in the final executable (NO_PLUGIN, so no plugin library)
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE FlightMapModule)
+# Force-link the module and its plugin so qmlcache initialization
+# is included in the final executable
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE FlightMapModule FlightMapModuleplugin)
 
 
 qt_add_resources(${CMAKE_PROJECT_NAME} flightmap_resources
