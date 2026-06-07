@@ -195,7 +195,7 @@ qt_add_qml_module(QGroundControlControlsModule
 
 
 # Link Qt libraries to ensure qmlcache is properly initialized for static library
-target_link_libraries(QmlControlsModule
+target_link_libraries(QGroundControlControlsModule
     PUBLIC
         Qt6::Core
         Qt6::Qml
@@ -204,7 +204,7 @@ target_link_libraries(QmlControlsModule
 
 # Force-link the module plugin so its qmlcache initialization
 # is included in the final executable
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE QmlControlsModule QmlControlsModuleplugin)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE QGroundControlControlsModule QGroundControlControlsModuleplugin)
 
 
 # ----------------------------------------------------------------------------
