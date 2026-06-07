@@ -34,7 +34,7 @@ set(_generated_qml_names
     Viewer3DSettings.qml
 )
 
-# Full paths in the build tree - output to QT_QML_OUTPUT_DIRECTORY for proper QML module resolution
+# Output to QT_QML_OUTPUT_DIRECTORY for proper QML module resolution
 set(_generated_qml "")
 foreach(_name IN LISTS _generated_qml_names)
     list(APPEND _generated_qml "${CMAKE_BINARY_DIR}/qml/QGroundControl/AppSettings/${_name}")
@@ -53,8 +53,9 @@ add_custom_command(
 add_custom_target(GenerateSettingsQml DEPENDS ${_generated_qml})
 
 # GENERATED suppresses qmlimportscanner reads of not-yet-existing files at configure time.
+# QT_RESOURCE_ALIAS makes absolute paths work in Qt resource system
 foreach(_name IN LISTS _generated_qml_names)
-    set_source_files_properties("${SETTINGS_QML_GEN_DIR}/${_name}"
+    set_source_files_properties("${CMAKE_BINARY_DIR}/qml/QGroundControl/AppSettings/${_name}"
         PROPERTIES
             GENERATED TRUE
             QT_RESOURCE_ALIAS "${_name}"
