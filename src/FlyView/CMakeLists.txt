@@ -82,9 +82,9 @@ target_link_libraries(FlyViewModule
         Qt6::QmlIntegration
 )
 
-# Force-link the module plugin so its qmlcache initialization
-# is included in the final executable
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE FlyViewModule FlyViewModuleplugin)
+# Force-link the module so its qmlcache initialization
+# is included in the final executable (NO_PLUGIN, so no plugin library)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE FlyViewModule)
 
 
 qt_add_resources(FlyViewModule flyview_resources

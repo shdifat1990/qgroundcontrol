@@ -48,9 +48,9 @@ target_link_libraries(AnalyzeViewModule
         Qt6::QmlIntegration
 )
 
-# Force-link the module plugin so its qmlcache initialization
-# is included in the final executable
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE AnalyzeViewModule AnalyzeViewModuleplugin)
+# Force-link the module so its qmlcache initialization
+# is included in the final executable (NO_PLUGIN, so no plugin library)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE AnalyzeViewModule)
 
 
 # Flatten subdir paths into /qmlimages/<name>; VibrationPageIcon URL has no .png

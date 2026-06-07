@@ -65,9 +65,9 @@ target_link_libraries(PlanViewModule
         Qt6::QmlIntegration
 )
 
-# Force-link the module plugin so its qmlcache initialization
-# is included in the final executable
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE PlanViewModule PlanViewModuleplugin)
+# Force-link the module so its qmlcache initialization
+# is included in the final executable (NO_PLUGIN, so no plugin library)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE PlanViewModule)
 
 
 # Files whose runtime alias differs from their on-disk filename.

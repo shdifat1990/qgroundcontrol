@@ -32,9 +32,9 @@ target_link_libraries(QGroundControlModule
         Qt6::QmlIntegration
 )
 
-# Force-link the QGroundControlModule plugin so its qmlcache initialization
-# is included in the final executable
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE QGroundControlModule QGroundControlModuleplugin)
+# Force-link the module so its qmlcache initialization
+# is included in the final executable (NO_PLUGIN, so no plugin library)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE QGroundControlModule)
 
 # iOS has no Qt SerialPort module — force no-serial-link before subdirectories read it.
 if(IOS)
