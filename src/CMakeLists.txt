@@ -24,6 +24,18 @@ qt_add_qml_module(QGroundControlModule
     NO_PLUGIN
 )
 
+# Link Qt libraries to ensure qmlcache is properly initialized for static library
+target_link_libraries(QGroundControlModule
+    PUBLIC
+        Qt6::Core
+        Qt6::Qml
+        Qt6::QmlIntegration
+)
+
+# Force-link the QGroundControlModule plugin so its qmlcache initialization
+# is included in the final executable
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE QGroundControlModule QGroundControlModuleplugin)
+
 # iOS has no Qt SerialPort module — force no-serial-link before subdirectories read it.
 if(IOS)
     set(QGC_NO_SERIAL_LINK ON CACHE BOOL "Disable serial port communication" FORCE)

@@ -42,6 +42,20 @@ qt_add_qml_module(FlightMapModule
     NO_PLUGIN
 )
 
+
+# Link Qt libraries to ensure qmlcache is properly initialized for static library
+target_link_libraries(FlightMapModule
+    PUBLIC
+        Qt6::Core
+        Qt6::Qml
+        Qt6::QmlIntegration
+)
+
+# Force-link the module plugin so its qmlcache initialization
+# is included in the final executable
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE FlightMapModule FlightMapModuleplugin)
+
+
 qt_add_resources(${CMAKE_PROJECT_NAME} flightmap_resources
     PREFIX "/res"
     BASE "${CMAKE_SOURCE_DIR}/resources"

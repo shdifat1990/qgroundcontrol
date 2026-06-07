@@ -73,6 +73,20 @@ qt_add_qml_module(FlyViewModule
     NO_PLUGIN
 )
 
+
+# Link Qt libraries to ensure qmlcache is properly initialized for static library
+target_link_libraries(FlyViewModule
+    PUBLIC
+        Qt6::Core
+        Qt6::Qml
+        Qt6::QmlIntegration
+)
+
+# Force-link the module plugin so its qmlcache initialization
+# is included in the final executable
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE FlyViewModule FlyViewModuleplugin)
+
+
 qt_add_resources(FlyViewModule flyview_resources
     PREFIX "/res"
     BASE "${CMAKE_SOURCE_DIR}/resources"
